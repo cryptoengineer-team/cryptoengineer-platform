@@ -1,0 +1,21 @@
+services:
+
+  inference:
+    env_file:                                # Swarm will load (in the container) both 'env_file' files in the list, not only '.env' by default !!
+          - ../.dev.env                               # Default '--env-file' option: $ docker-compose up -d
+        #    - .secrets/env-secrets               # Requires '--env-file' option: $ docker-compose --env-file .env-secrets up -d
+    build:
+        context: .
+        dockerfile: Dockerfile.server                 # to build a root image with a system pip install of mlflow
+    image: inference-server
+    container_name: inference-server${INFERENCE_PORT}
+    hostname: inference-server_${INFERENCE_PORT}
+        #restart: unless-stopped
+    ports:
+        - ${INFERENCE_PORT}:${INFERENCE_PORT}
+    networks:
+      - test-mlops-project_app-network
+
+networks:
+  test-mlops-project_app-network:
+    driver: bridge

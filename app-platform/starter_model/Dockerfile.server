@@ -1,0 +1,30 @@
+# Good practice: Use official base images
+#
+FROM python:3.10-slim
+
+# Good practice: upgrade distro packages (with last security patches).
+#
+RUN apt-get update && apt-get -y upgrade \
+    && pip install --upgrade pip \
+    && pip --version
+
+RUN apt-get update && apt-get install -y procps \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install mlflow dependencies:
+WORKDIR /app
+
+# If already exists a mlflow.db
+#COPY mlflow.db .
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt \
+    && rm requirements.txt
+
+# Expose mlflow ports
+#
+EXPOSE 8080
+
+# Launch the model inference server
+#
+CMD mlflow models serve -m models:/model_iris/1 -p 8080 --no-conda

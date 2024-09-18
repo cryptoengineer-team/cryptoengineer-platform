@@ -1,0 +1,44 @@
+services:
+
+  mlflow:
+    env_file:                                # Swarm will load (in the container) both 'env_file' files in the list, not only '.env' by default !!
+          - ../.dev.env                               # Default '--env-file' option: $ docker-compose up -d
+        #    - .secrets/env-secrets               # Requires '--env-file' option: $ docker-compose --env-file .env-secrets up -d
+    build:
+        context: ./mlflow
+        dockerfile: Dockerfile                 # to build a root image with a system pip install of mlflow
+    image: mlflow_tracker_slim
+    container_name: mlflow_tracker_${MLFLOW_PORT}
+    hostname: mlflow_server_${MLFLOW_PORT}
+        #restart: unless-stopped
+        #depends_on:
+        #    - mysql
+    ports:
+          - ${MLFLOW_PORT}:${MLFLOW_PORT}
+    volumes:
+            # Artifact store locally available through folder mapping:
+            - ./mlflow:/mlflow
+    networks:
+      - crypto-app-network
+
+  streamlit:
+    env_file:                                # Swarm will load (in the container) both 'env_file' files in the list, not only '.env' by default !!
+          - ../.dev.env                               # Default '--env-file' option: $ docker-compose up -d
+        #    - .secrets/env-secrets               # Requires '--env-file' option: $ docker-compose --env-file .env-secrets up -d
+    build:
+        context: .
+        dockerfile: Dockerfile                 # to build a root image with a system pip install of mlflow
+    image: streamlit-app
+    container_name: streamlit-app${APP_PORT}
+    hostname: streamlit-app${APP_PORT}
+        #restart: unless-stopped
+    depends_on:
+      - mlflow
+    ports:
+        - ${APP_PORT}:${APP_PORT}
+    networks:
+      - crypto-app-network
+
+networks:
+  crypto-app-network:
+    driver: bridge

@@ -1,0 +1,11 @@
+services:
+  model:
+    env_file:                                # Swarm will load (in the container) both 'env_file' files in the list, not only '.env' by default !!
+          - .dev.env                               # Default '--env-file' option: $ docker-compose up -d
+    build:
+        context: .
+        dockerfile: Dockerfile.local                 # to build a root image with a system pip install of mlflow
+    image: model-app
+    container_name: model-app
+    hostname: model-app
+        #restart: unless-stopped
