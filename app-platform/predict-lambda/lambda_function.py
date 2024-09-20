@@ -91,10 +91,14 @@ def lambda_handler(event, context):
     # Función lambda que lista los objetos en un bucket de s3 con un prefijo y genera urls prefirmadas para ellos
 
     if (event['body']) and (event['body'] is not None):
-        #body = json.loads(event['body'])
-        body = event['body']
+        body = json.loads(event['body'])
+        print("Body 1:",body)
+        
+        #body = event['body']
         # Read the body parameters
         try:
+            body= body['body']
+            print("Body 2:",body)
             if (body['user']) and (body['user'] is not None):
                 username = body['user']
                 
@@ -105,7 +109,7 @@ def lambda_handler(event, context):
                 model_version = body['version']
                 
         except KeyError:
-            logger.Error("Invalid or incorrect arguments.")
+            logger.error("Invalid or incorrect arguments.")
             return {
                 'statusCode': 404,
                 'body': json.dumps("Invalid or incorrect arguments.")
@@ -119,7 +123,7 @@ def lambda_handler(event, context):
         
         if pkl_files and len(pkl_files)>0:
             model_location=pkl_files[0]
-
+            """
             #iam_role_arn="arn:aws:iam::223817798831:role/service-role/predict_model-role-ynh9ez1d"
             iam_role_arn=os.environ['IAM_ROLE_ARN']
             lambda_name=f"sklearn-{username}-{model_name}"
@@ -150,7 +154,7 @@ def lambda_handler(event, context):
             # Instanciate a Lambda 
             wrapper = APIGatewayWrapper(apigateway_client)
             
-            response= wrapper.create_model_deployment(api_name, "1.0", lambda_arn)
+            response= wrapper.create_api_deployment(api_name, "1.0", lambda_arn)
             
             return {
                     'statusCode': 200,
@@ -162,7 +166,7 @@ def lambda_handler(event, context):
                     'statusCode': 200,
                     'body': json.dumps(model_location)
                 }
-            """
+
         else:
             return {
                     'statusCode': 404,
