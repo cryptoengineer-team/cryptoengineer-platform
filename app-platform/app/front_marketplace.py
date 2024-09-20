@@ -21,8 +21,10 @@ lambda_client = boto3.client(
     aws_secret_access_key=aws_secret_access_key,
     aws_session_token=aws_session_token)
 
-bucket_name = 'mbit-tfm-crypto'
+bucket_name = 'cryptoengineer'
 URL_API_TOKEN = "https://o2grj23ube.execute-api.us-east-1.amazonaws.com/dev"
+account_id = "212430227630"
+lambda_name = "job_model_eval"
 
 
 # Función para autenticar usuario
@@ -52,30 +54,47 @@ def model_version_not_exists(username, model_name, model_version):
         return False
 
 # Función para guardar modelo y metadatos
-def save_model(model_name, model_version, model_description, model_file, script_file, username, model_type, symbol, base_currency, frequency):
-    s3_key_model = f"models/{username}/{model_name}/{model_version}/{model_file.name}"
+def save_model(model_name, model_version, model_description, model_file, script_file, username, model_type, symbol, base_currency, frequency, requirements):
+    if model_type == 'SCRIPTING':
+        s3_key_model = ""
+    else:
+        s3_key_model = f"models/{username}/{model_name}/{model_version}/{model_file.name}"
     s3_key_script = f"models/{username}/{model_name}/{model_version}/{script_file.name}"
     metadata = {
         "description": model_description,
+        "model_type": model_type,
+        "symbol": symbol,
+        "base_currency": base_currency,
+        "frecuency": frequency,
+        "requirements":requirements,
         "ratings": []
     }
     try:
         if model_version_not_exists(username, model_name, model_version):
-            s3_client.upload_fileobj(model_file, bucket_name, s3_key_model)
+            if model_type != 'SCRIPTING':
+                s3_client.upload_fileobj(model_file, bucket_name, s3_key_model)
             s3_client.upload_fileobj(script_file, bucket_name, s3_key_script)
             s3_client.put_object(Bucket=bucket_name, Key=f"models/{username}/{model_name}/{model_version}/metadata.json", Body=json.dumps(metadata))
             st.session_state.save_model = "save"
             st.success(f"Modelo {model_name} versión {model_version} subido exitosamente.")
             script_location = f"s3://{bucket_name}/models/{username}/{model_name}/{model_version}/{script_file.name}"
-            model_location = f"s3://{bucket_name}/models/{username}/{model_name}/{model_version}/{model_file.name}"
+            if model_type=="SCRIPTING":
+                model_location = ""
+            else:
+                model_location = f"s3://{bucket_name}/models/{username}/{model_name}/{model_version}/{model_file.name}"
             job_name = f"{username}_{model_name}_{model_version}_job"
             lambda_payload = {
                 'script_location': script_location,
                 'model_location': model_location,
-                'job_name': job_name
+                'job_name': job_name,
+                'model_type': model_type,
+                'symbol': symbol,
+                'base_currency': base_currency,
+                'frecuency': frequency,
+                'requirements': requirements
                 }
             response = lambda_client.invoke(
-                FunctionName=f"arn:aws:lambda:us-east-1:351060898983:function:job_model_eval",
+                FunctionName=f"arn:aws:lambda:us-east-1:{account_id}:function:{lambda_name}",
                 InvocationType="Event",
                 Payload=json.dumps(lambda_payload)
             )
@@ -150,14 +169,6 @@ else:
                         metadata_response = s3_client.get_object(Bucket=bucket_name, Key=metadata_key)
                         metadata = json.loads(metadata_response['Body'].read().decode('utf-8'))
                         average_rating = sum(metadata["ratings"]) / len(metadata["ratings"]) if metadata["ratings"] else "-"
-                        # models.append({
-                        #     "username": username,
-                        #     "model_name": model_name,
-                        #     "model_version": model_version,
-                        #     "average_rating": average_rating,
-                        #     "metadata_key": metadata_key,
-                        #     "metadata": metadata
-                        # })
 
                         # Aplicar filtros
                         if average_rating == "-":
@@ -225,19 +236,30 @@ else:
                 model_symbol = st.selectbox("Symbol", ["ETHUSD","XDGUSD","USDTUSD","LINKUSD","XBTUSD","IBEX35","Nikkei225","DAX","DowJones","EuroStoxx50","Nasdaq","SP500","USDCHF","USDJPY","USDEUR","USDGBP","BZUSD","CLUSD","NGUSD","GCUSD"])
                 model_base_currency = st.selectbox("Base Currency",["USD"])
                 model_frequency = st.selectbox("Frecuencia", ["15min", "1day"])
-                model_file = st.file_uploader("Selecciona un archivo de modelo", type=["pkl", "h5", "pt", "onnx"])
-                script_file = st.file_uploader("Selecciona un archivo de script (.py o .ipynb)", type=["py", "ipynb"])
+                model_requirements = st.text_area("Librerías necesarias para el script. DEBEN ESCRIBIRSE EN MINÚSCULA, EN UNA LINEA Y SEPARADOS POR COMAS")
+                model_file = st.file_uploader("Selecciona un archivo de modelo SOLAMENTE si es de tipo ML SCIKIT-LEARN", type=["pkl", "h5", "pt", "onnx"])
+                script_file = st.file_uploader("Selecciona un archivo de script (.py)", type=["py"])
                 col1, col2, _ = st.columns([1, 1, 3])  # Ajustar el ancho de las columnas
                 with col1:
                     submit_button = st.form_submit_button(label='Subir Modelo')
                     if submit_button:
-                        if model_name and model_version and model_description and model_file and script_file:
-                            save_model(model_name, model_version, model_description, model_file, script_file, st.session_state.username, model_symbol, model_base_currency, model_frequency)
-                            
-                            st.session_state.show_modal = False
-                            st.rerun()
+                        if model_type == 'SCRIPTING':
+                            if model_name and model_version and model_description and script_file and model_type and model_symbol and model_base_currency and model_frequency:
+                                model_file = ''
+                                save_model(model_name, model_version, model_description, model_file, script_file, st.session_state.username, model_type, model_symbol, model_base_currency, model_frequency, model_requirements)
+                                
+                                st.session_state.show_modal = False
+                                st.rerun()
+                            else:
+                                st.error("Por favor, completa todos los campos.")
                         else:
-                            st.error("Por favor, completa todos los campos.")
+                            if model_name and model_version and model_description and model_file and script_file and model_type and model_symbol and model_base_currency and model_frequency:
+                                save_model(model_name, model_version, model_description, model_file, script_file, st.session_state.username, model_type, model_symbol, model_base_currency, model_frequency, model_requirements)
+                                
+                                st.session_state.show_modal = False
+                                st.rerun()
+                            else:
+                                st.error("Por favor, completa todos los campos.")
                 with col2:
                     cancel_submit_button = st.form_submit_button(label="Cancelar")
                     if cancel_submit_button:

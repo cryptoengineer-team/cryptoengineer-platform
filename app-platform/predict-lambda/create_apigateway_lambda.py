@@ -133,6 +133,8 @@ def create_model_deployment(api_name: str, version: str, lambda_arn: str,
     logger.info("Despliegue API %s Method %s Path %s", api_name, http_method, path_part)
 
     #api_id="9fylkob4j7"
+    invokeURL= f"https://{api_id}.execute-api.{aws_region}.amazonaws.com/{stage_name}/{path_part}"
+    
     # Create the Invoke Lambda permission
     lambda_client = boto3.client('lambda')
     acct_id= boto3.client('sts').get_caller_identity()["Account"]
@@ -142,8 +144,10 @@ def create_model_deployment(api_name: str, version: str, lambda_arn: str,
             Action='lambda:InvokeFunction', Principal='apigateway.amazonaws.com',
             SourceArn=source_arn)
 
-    print("Invoke URL: ", f"https://{api_id}.execute-api.{aws_region}.amazonaws.com/{stage_name}/{path_part}")
-    return deployment_response
+    #print("Invoke URL: ", invokeURL)
+    logger.infologger.info("Invoke URL:  %s", invokeURL)
+    return invokeURL
+
 
 if __name__ == "__main__":
     """
