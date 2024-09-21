@@ -1,5 +1,6 @@
 import boto3
 import logging
+from botocore.exceptions import ClientError
 
 logger = logging.getLogger(__name__)
 
@@ -97,3 +98,25 @@ class APIGatewayWrapper:
     
         logger.info("Invoke URL:  %s", invokeURL)
         return invokeURL
+
+    def get_rest_api_name(self, url: str):
+        # Obtenemos Restapi id de la URL
+        api_id = url.split(".")[0].split("//")[1]
+        print(api_id)
+        # Obtenemos el nombre de la API con boto3
+        try:        
+            api_name = self.apigateway_client.get_rest_api(restApiId=api_id)['name']
+        except ClientError as e:
+            logger.exception("Error al identificar la API: %s", e)
+            raise
+        
+        return api_name
+
+    def delete_rest_api(self, restapi_id: str):
+        # Eliminamos la API con boto3
+        try:
+            self.apigateway_client.delete_rest_api(restApiId=restapi_id)
+        except ClientError as e:
+            logger.exception("Error al eliminar la API: %s", e)
+            raise
+        return True

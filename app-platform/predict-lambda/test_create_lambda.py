@@ -1,64 +1,118 @@
 import logging
+import pprint
+import requests
+import json
 import boto3
-from lambda_wrapper import LambdaWrapper
+from botocore.exceptions import ClientError
+# URL de API de tokens
+URL_API_TOKEN = "https://q4feu6uy9j.execute-api.us-east-1.amazonaws.com/pro"
 
 logger = logging.getLogger(__name__)
 
-def run_test(iam_role_arn, lambda_name, lambda_description, handler_name, package_type, deployment_package, time_out, env_vars):
-    """
-    Runs the scenario.
 
-    :param lambda_client: A Boto3 Lambda client.
-    :param iam_resource: A Boto3 IAM resource.
-    :param basic_file: The name of the file that contains the basic Lambda handler.
-    :param calculator_file: The name of the file that contains the calculator Lambda handler.
-    :param lambda_name: The name to give resources created for the scenario, such as the
-                        IAM role and the Lambda function.
-    """
-    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+def user_auth(user_token:dict):
+    # Función para la validación del usuario, donde llega un usuario y su token, validando que sean correctos
 
-    print("-" * 88)
-    print("Welcome to the AWS Lambda getting started with functions demo.")
-    print("-" * 88)
-
-    lambda_client = boto3.client("lambda")
-    iam_resource = boto3.resource("iam")
-    
-    wrapper = LambdaWrapper(lambda_client, iam_resource)
-
-    print(f"Looking for function {lambda_name}...")
-    function = wrapper.get_function(lambda_name)
-    if function is None:
-        # Create a lambda function based on container image
-        print(f"...and creating the {lambda_name} Lambda function.")
-        wrapper.create_function(
-            lambda_name, lambda_description, handler_name, iam_role_arn, package_type, deployment_package,
-            time_out, env_vars
-        )
+    # Obtenemos el usuario facilitado
+    user =user_token['user']
+    # Obtenemos el token facilitado
+    token = user_token['token']
+    # Validamos si son correctos
+    response = requests.get(f"{URL_API_TOKEN}/token/{user}/{token}")
+    # Si el resultado es "Granted access" devolvemos True, si no, devolvemos False
+    if response.content.decode('utf-8').strip("\"") == "Granted access":
+        return True
     else:
-        print(f"Function {lambda_name} already exists.")
-    print("-" * 88)
+        return False
 
+# Function to include in SDK
+URL_API_DEPLOY = "https://1uxn3ixz7j.execute-api.us-east-2.amazonaws.com/pro"
+def deploy(user_token: dict, model_name: str, version:str):
+    invokeURL=None
+    # Validamos el usuario
+    print("Validamos usuario")
+    if user_auth(user_token):
+        print("Validado usuario")
+        # Si el usuario es correcto, llamamos a la función run_test
+        # Obtenemos el usuario facilitado
+        user = user_token['user']
+        # Obtenemos el token facilitado
+        token = user_token['token']
+        # Creamos el cuerpo del mensaje a enviar con los parametros
+        body= {
+            "body": {
+                "user": user,
+                "model": model_name,
+                "version": version
+            }
+        }
+        print("Solicitamos creacion de API")
+        # Llamamos a la API para que despliegue el modelo
+        response= requests.post(f"{URL_API_DEPLOY}/deploy", json=body)
+        # Obtenemos la información de la tabla solicitada via API
+        #response = requests.get(f"{URL_API_TABLE_INFO}/list_info")
+        print("Creacion de API", response)
+        invokeURL = json.loads(response.content.decode('utf-8'))
+    else:
+            # Si la validación de usuario-token no son correctos, devolvemos un mensaje de error
+            raise ("You don`t have access to data lake or your credentials are incorrect")
+        
+    return invokeURL
+    
+# Function to include in SDK
+URL_API_SHUTDOWN = "https://1uxn3ixz7j.execute-api.us-east-2.amazonaws.com/pro"
+def shutdown(user_token: dict, url: str):
+    # Validamos el usuario
+    print("Validamos usuario")
+    if user_auth(user_token):
+        print("Validado usuario")
+        # Si el usuario es correcto, llamamos a la función run_test
+        # Obtenemos el usuario facilitado
+        user = user_token['user']
+        # Obtenemos el token facilitado
+        token = user_token['token']
+        # Creamos el cuerpo del mensaje a enviar con los parametros
+        body= {
+            "body": {
+                "url": url
+            }
+        }
+        print("Solicitamos la eliminación de API")
+        # Llamamos a la API para que despliegue el modelo
+        response= requests.post(f"{URL_API_SHUTDOWN}/shutdown", json=body)
+        # Obtenemos la información de la tabla solicitada via API
+        #response = requests.get(f"{URL_API_TABLE_INFO}/list_info")
+        if response.status_code == 200:
+            message = json.loads(response.content.decode('utf-8'))
+            print(message)
+            return True
+        else:
+            message = json.loads(response.content.decode('utf-8'))
+            print(message)
+            return False
+    else:
+            # Si la validación de usuario-token no son correctos, devolvemos un mensaje de error
+            raise ("You don`t have access to data lake or your credentials are incorrect")
 
 if __name__ == "__main__":
-    iam_role_arn="arn:aws:iam::223817798831:role/service-role/predict_model-role-ynh9ez1d"
-    lambda_name="test_sklearn_model"
-    lambda_description="Return prediction from a sklearn model - Test"
-    handler_name="lambda_function.lambda_handler"
-    package_type="Image"
-    time_out=180
-    env_vars={'Variables': {"AWS_BUCKET_NAME": "cryptoengineer-app",
-                            "AWS_MODEL_KEY": "mlflow/2/cf5d04ca121b4ffea859fd4816e440b1/artifacts/east2_model/model.pkl"
-                            }
-              }
+    """
+    user_token = {'user': 'hector', 'token': 'a9agHyfg5478GfufUfj98534fs4gHh89Ig7v6fG89kJy7U5f5FFhjU88'}
+    model_name = "skl_iris_predict"
+    version = "1"
+    invoke_URL=deploy(user_token, model_name, version)
     
-    deployment_package="223817798831.dkr.ecr.us-east-2.amazonaws.com/sklearn_model@sha256:c8a0ec9666634f6089f895b13a7dfc45fd8d03508c392fcba8661ee9f04563f5"
-        
-    try:
-        run_test(iam_role_arn,  lambda_name, lambda_description, handler_name, package_type, deployment_package, time_out, env_vars)       
-    except Exception:
-        logging.exception("Something went wrong with the test!")
-# snippet-end:[python.example_code.lambda.Scenario_GettingStartedFunctions]
+    print(invoke_URL)
+    """
+    #url = "https://oynbvfi8d5.execute-api.us-east-2.amazonaws.com/dev/predict"
+    #print(get_api_name(url))
+    
+    """
+    paginator = apigateway_client.get_paginator('get_rest_apis')
+    page_iterator = paginator.paginate(PaginationConfig={'MaxItems': 1})
+
+    for page in page_iterator:
+        pprint.pp(page)    
+    """
 """
 aws lambda create-function \
   --function-name test_sklearn_model \
