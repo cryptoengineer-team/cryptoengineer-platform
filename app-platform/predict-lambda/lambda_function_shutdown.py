@@ -2,8 +2,6 @@
 
 import json
 import boto3
-from botocore.exceptions import NoCredentialsError, ClientError
-import os
 
 import logging
 from lambda_wrapper import LambdaWrapper

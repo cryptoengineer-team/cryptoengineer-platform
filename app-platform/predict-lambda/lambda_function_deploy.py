@@ -123,7 +123,7 @@ def lambda_handler(event, context):
         
         if pkl_files and len(pkl_files)>0:
             model_location=pkl_files[0]
-            """
+            
             #iam_role_arn="arn:aws:iam::223817798831:role/service-role/predict_model-role-ynh9ez1d"
             iam_role_arn=os.environ['IAM_ROLE_ARN']
             lambda_name=f"sklearn-{username}-{model_name}"
@@ -166,7 +166,7 @@ def lambda_handler(event, context):
                     'statusCode': 200,
                     'body': json.dumps(model_location)
                 }
-
+            """
         else:
             return {
                     'statusCode': 404,
