@@ -102,7 +102,7 @@ class APIGatewayWrapper:
     def get_rest_api_name(self, url: str):
         # Obtenemos Restapi id de la URL
         api_id = url.split(".")[0].split("//")[1]
-        print(api_id)
+
         # Obtenemos el nombre de la API con boto3
         try:        
             api_name = self.apigateway_client.get_rest_api(restApiId=api_id)['name']
@@ -110,7 +110,7 @@ class APIGatewayWrapper:
             logger.exception("Error al identificar la API: %s", e)
             raise
         
-        return api_name
+        return api_id, api_name
 
     def delete_rest_api(self, restapi_id: str):
         # Eliminamos la API con boto3

@@ -1,4 +1,4 @@
-# Lambda function to create a lambda and an API Gateway to deploy a sklearn model
+# Lambda function to remove a lambda and an API Gateway created to deploy a sklearn model
 
 import json
 import boto3
@@ -22,8 +22,7 @@ def lambda_handler(event, context):
         body = json.loads(event['body'])
         #body = event['body']        
         #print("Body 1:",body)
-        
-        #body = event['body']
+
         # Read the body parameters
         try:
             body= body['body']
@@ -39,7 +38,7 @@ def lambda_handler(event, context):
     # Get the name of the API and check if exists
     wrapper = APIGatewayWrapper(apigateway_client)
     try:
-        api_name = wrapper.get_rest_api_name(url)
+        api_id, api_name = wrapper.get_rest_api_name(url)
     except Exception:
         logging.exception("An error ocurred when getting the API Gateway name")
         return {
@@ -50,7 +49,7 @@ def lambda_handler(event, context):
     if api_name:
         # Delete the API Gateway and its resources
         try:
-            wrapper.delete_rest_api(api_name)
+            wrapper.delete_rest_api(api_id)
         except Exception:
             # if error, return a server error
             logging.exception("An error ocurred when deleting the API Gateway")
@@ -94,4 +93,3 @@ def lambda_handler(event, context):
                 'statusCode': 404,
                 'body': json.dumps("API Gateway not found.")
         }
-

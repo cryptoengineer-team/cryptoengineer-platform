@@ -66,11 +66,6 @@ def shutdown(user_token: dict, url: str):
     print("Validamos usuario")
     if user_auth(user_token):
         print("Validado usuario")
-        # Si el usuario es correcto, llamamos a la función run_test
-        # Obtenemos el usuario facilitado
-        user = user_token['user']
-        # Obtenemos el token facilitado
-        token = user_token['token']
         # Creamos el cuerpo del mensaje a enviar con los parametros
         body= {
             "body": {
@@ -78,9 +73,8 @@ def shutdown(user_token: dict, url: str):
             }
         }
         print("Solicitamos la eliminación de API")
-        # Llamamos a la API para que despliegue el modelo
+        # Llamamos a la API para que elimine el modelo
         response= requests.post(f"{URL_API_SHUTDOWN}/shutdown", json=body)
-        # Obtenemos la información de la tabla solicitada via API
         #response = requests.get(f"{URL_API_TABLE_INFO}/list_info")
         if response.status_code == 200:
             message = json.loads(response.content.decode('utf-8'))
@@ -103,7 +97,14 @@ if __name__ == "__main__":
     
     print(invoke_URL)
     """
-    #url = "https://oynbvfi8d5.execute-api.us-east-2.amazonaws.com/dev/predict"
+    
+    user_token = {'user': 'hector', 'token': 'a9agHyfg5478GfufUfj98534fs4gHh89Ig7v6fG89kJy7U5f5FFhjU88'}
+    url = "https://oynbvfi8d5.execute-api.us-east-2.amazonaws.com/dev/predict"
+    res= shutdown(user_token,url)
+    print(res)
+
+    #print(get_api_id(url))
+    #print(get_api_key(url))
     #print(get_api_name(url))
     
     """
