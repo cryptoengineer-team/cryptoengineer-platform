@@ -51,7 +51,7 @@ def lambda_handler(event, context):
         }    
     else:
         res= {
-            'statusCode': 300,
+            'statusCode': 400,
             'body': "No valid input data"
         }
     
