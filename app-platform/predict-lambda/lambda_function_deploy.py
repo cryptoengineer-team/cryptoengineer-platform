@@ -92,12 +92,12 @@ def lambda_handler(event, context):
 
     if (event['body']) and (event['body'] is not None):
         body = json.loads(event['body'])
-        print("Body 1:",body)
-        
-        #body = event['body']
+        #print("Body 1:",body)
+
         # Read the body parameters
         try:
             body= body['body']
+            #body = event['body']
             print("Body 2:",body)
             if (body['user']) and (body['user'] is not None):
                 username = body['user']
@@ -147,26 +147,26 @@ def lambda_handler(event, context):
                     'body': json.dumps("An error ocurred when creating the Lambda Function")
                 }
             
-            api_name=lambda_name
-            
-            # Set the AWS resource clients
-            apigateway_client = boto3.client("apigateway")
-            # Instanciate a Lambda 
-            wrapper = APIGatewayWrapper(apigateway_client)
-            
-            response= wrapper.create_api_deployment(api_name, "1.0", lambda_arn)
-            
-            return {
-                    'statusCode': 200,
-                    'body': json.dumps(response)
+            if lambda_arn:
+                api_name=lambda_name
+                
+                # Set the AWS resource clients
+                apigateway_client = boto3.client("apigateway")
+                # Instanciate a Lambda 
+                wrapper = APIGatewayWrapper(apigateway_client)
+                
+                response= wrapper.create_api_deployment(api_name, "1.0", lambda_arn)
+                
+                return {
+                        'statusCode': 200,
+                        'body': json.dumps(response)
+                    }
+            else:
+                return {
+                    'statusCode': 404,
+                    'body': json.dumps("Model already deployed")
                 }
 
-            """
-            return {
-                    'statusCode': 200,
-                    'body': json.dumps(model_location)
-                }
-            """
         else:
             return {
                     'statusCode': 404,

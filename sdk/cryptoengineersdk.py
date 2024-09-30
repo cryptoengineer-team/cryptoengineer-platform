@@ -9,6 +9,10 @@ URL_API_DATA = "https://q4feu6uy9j.execute-api.us-east-1.amazonaws.com/pro"
 URL_API_TOKEN = "https://q4feu6uy9j.execute-api.us-east-1.amazonaws.com/pro"
 # URL de API de tabla información
 URL_API_TABLE_INFO = "https://q4feu6uy9j.execute-api.us-east-1.amazonaws.com/pro"
+# URL de API para deploy de un modelo
+URL_API_DEPLOY = "https://vcp8tck072.execute-api.us-east-1.amazonaws.com/pro"
+# URL de API para eliminar un modelo desplegado
+URL_API_SHUTDOWN = "https://vcp8tck072.execute-api.us-east-1.amazonaws.com/pro"
 
 
 def reader (user_token: dict, table_name: str, symbol:str ='ALL_SYMBOLS', from_year:int = 0, to_year:int = 9999):
@@ -220,3 +224,79 @@ def check_params(user_token, table_name, symbol, from_year, to_year):
             list_symbols_years.append([symbol, int(init_year), int(end_year)])
 
     return [True, list_symbols_years]
+
+def deploy(user_token: dict, model_name: str, version:str):
+    """
+    Función para desplegar un modelo scikit-learn subido por el usuario.
+
+    Args:
+        user_token (dict): Diccionario con el usuario y su token.
+        model_name (str): Nombre del modelo a desplegar.
+        version (str): Versión del modelo a desplegar.
+
+    Returns:
+        str: URL para invocar el modelo desplegado.
+    """
+    invokeURL=None
+    # Validamos el usuario
+    if user_auth(user_token):
+        print(f"{user_token['user']} was authenticated")
+        # Si el usuario es correcto, llamamos a la función run_test
+        # Obtenemos el usuario facilitado
+        user = user_token['user']
+        # Creamos el cuerpo del mensaje a enviar con los parametros
+        body= {
+            "body": {
+                "user": user,
+                "model": model_name,
+                "version": version
+            }
+        }
+        print("Solicitamos creacion de API")
+        # Llamamos a la API para que despliegue el modelo
+        response= requests.post(f"{URL_API_DEPLOY}/deploy", json=body)
+        # Obtenemos la información de la tabla solicitada via API
+        print("Creacion de API", response)
+        invokeURL = json.loads(response.content.decode('utf-8'))
+    else:
+            # Si la validación de usuario-token no son correctos, devolvemos un mensaje de error
+            raise ("You don`t have access to data lake or your credentials are incorrect")
+        
+    return invokeURL
+
+def shutdown(user_token: dict, url: str):
+    """
+    Función para eliminar un modelo scikit-learn desplegado por el usuario.
+
+    Args:
+        user_token (dict): Diccionario con el usuario y su token.
+        url (str): URL de invocación al modelo que deseamos eliminar.
+
+    Returns:
+        boolean: True si la operación ha sido correcta.
+    """
+    
+    # Validamos el usuario
+    if user_auth(user_token):
+        print(f"{user_token['user']} was authenticated")
+        # Creamos el cuerpo del mensaje a enviar con los parametros
+        body= {
+            "body": {
+                "url": url
+            }
+        }
+        print("Solicitamos la eliminación de API")
+        # Llamamos a la API para que elimine el modelo
+        response= requests.post(f"{URL_API_SHUTDOWN}/shutdown", json=body)
+        # Comprobamos la validez de la operación
+        if response.status_code == 200:
+            message = json.loads(response.content.decode('utf-8'))
+            print(message)
+            return True
+        else:
+            message = json.loads(response.content.decode('utf-8'))
+            print(message)
+            return False
+    else:
+            # Si la validación de usuario-token no son correctos, devolvemos un mensaje de error
+            raise ("You don`t have access to data lake or your credentials are incorrect")
