@@ -50,7 +50,6 @@ def deploy(user_token: dict, model_name: str, version:str):
         # Llamamos a la API para que despliegue el modelo
         response= requests.post(f"{URL_API_DEPLOY}/deploy", json=body)
         # Obtenemos la información de la tabla solicitada via API
-        #response = requests.get(f"{URL_API_TABLE_INFO}/list_info")
         print("Creacion de API", response)
         invokeURL = json.loads(response.content.decode('utf-8'))
     else:
@@ -75,7 +74,7 @@ def shutdown(user_token: dict, url: str):
         print("Solicitamos la eliminación de API")
         # Llamamos a la API para que elimine el modelo
         response= requests.post(f"{URL_API_SHUTDOWN}/shutdown", json=body)
-        #response = requests.get(f"{URL_API_TABLE_INFO}/list_info")
+        # Comprobamos la validez de la operación
         if response.status_code == 200:
             message = json.loads(response.content.decode('utf-8'))
             print(message)
