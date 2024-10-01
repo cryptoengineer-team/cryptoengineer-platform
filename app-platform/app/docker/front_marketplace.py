@@ -111,13 +111,35 @@ def delete_model(username, model_name, model_version):
         if 'Contents' in response:
             for obj in response['Contents']:
                 s3_client.delete_object(Bucket=bucket_name, Key=obj['Key'])
-        st.success(f"Modelo {model_name} versión {model_version} eliminado exitosamente.")
     except NoCredentialsError:
         print("error")
         st.error("Credenciales de AWS no encontradas.")
     except ClientError as e:
         print("error2")
         st.error(f"Error al eliminar el modelo: {e}")
+    
+    # Crear el cliente de AWS Glue
+    glue = boto3.client('glue')
+    
+    # Definir los nombres del trabajo y del trigger
+    job_name = f"{username}_{model_name}_{model_version}_job"
+    trigger_name = f"{username}_{model_name}_{model_version}_job_trigger"
+    
+    # Eliminar el trabajo de Glue
+    try:
+        glue.delete_job(JobName=job_name)
+        print(f"Glue job {job_name} deleted successfully.")
+    except glue.exceptions.EntityNotFoundException:
+        print(f"Glue job {job_name} not found.")
+    
+    # Eliminar el trigger de Glue
+    try:
+        glue.delete_trigger(Name=trigger_name)
+        print(f"Glue trigger {trigger_name} deleted successfully.")
+    except glue.exceptions.EntityNotFoundException:
+        print(f"Glue trigger {trigger_name} not found.")
+        
+    st.success(f"Modelo {model_name} versión {model_version} eliminado exitosamente.")
 
 def check_s3_folder_exists(bucket_name, folder_name):
     s3_client = boto3.client('s3')
