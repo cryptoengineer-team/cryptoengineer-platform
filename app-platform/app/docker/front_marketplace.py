@@ -390,7 +390,7 @@ else:
                             with col2:
                                 st.write(f"Moneda: {model['metadata']['base_currency']}")
                             with col3:
-                                st.write(f"Moneda: {model['metadata']['frecuency']}")
+                                st.write(f"Frecuencia: {model['metadata']['frecuency']}")
 
                             #Mostramos descripción
                             st.write(f"Descripción: {model['metadata']['description']}")
