@@ -31,7 +31,7 @@ A continuación se detalla el contenido de este repositorio en sus diferentes ca
 	- David Martín Hernández		    Máster Data Engineer
 	- Héctor Jesús Ibañez Dura		Máster Data Science
 	- Eugenio Chinea García		    Máster Data Science
-	- Carlos Atuzarra García		    Máster Data Science
+	- Carlos Altuzarra García		    Máster Data Science
 
 ## Contributing
 If you find some bug or typo, please let me know or fixit and push it to be analyzed. 
