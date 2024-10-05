@@ -18,9 +18,9 @@ A continuación se detalla el contenido de este repositorio en sus diferentes ca
 
 - **Limpieza de registros en Silver**: contiene el codigo empleado para limpiar duplicados puntualmente detectados en el datalake de criptomonedas.
 
-- **load**: POR COMENTAR!!.
+- **load**: módulo con código para acceder a las APIs de ciertos valores y descargas por lotes, en tiempo real, etc.
 
-- **storage**: POR COMENTAR!!.
+- **storage**: módulo con código para acceder a S3 para salvar y recuperar datos.
 
 ## Autores
 	- Eduardo Muñoz Sala		    Máster Data Engineer
