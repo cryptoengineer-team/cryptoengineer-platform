@@ -10,17 +10,9 @@ A continuación se detalla el contenido de este repositorio en sus diferentes ca
 
 - **Modelos ML**: contiene los scripts y/o notebooks de los algoritmos basados en técnicas de Machine Learning.
 
-- **notebooks**: contiene Los notebooks
+- **notebooks**: contiene Los notebooks de los modelos ténicos y/o de ML.
 
-- **scripts**: contiene el código Python de la función Lambda que se invoca al emplear el método reader.
-
-- **lambda_deploy_model**: contiene el código Python de la función Lambda que se invoca para solicitar el despliegue y publicación del modelo de usuario para inferencia on-line. Esta funcionalidad esta limitada y en versión beta.
-
-- **lambda_shutdown_model**: contiene el código Python de la función Lambda que se invoca para solicitar la eliminación del modelo desplegado por el usuario. Esta funcionalidad está en versión beta.
-
-- **deploy_utils**: contiene diferentes scripts en código Python para realizar tests de los despliegues de modelos.
-
-- **cryptoengineersdk.py**: contiene el codigo de la librería.
+- **scripts**: contiene el código Python de las funciones de evaluación de los modelos que se registran en la aplicación.
 
 ## Autores
 	- Eduardo Muñoz Sala		    Máster Data Engineer
