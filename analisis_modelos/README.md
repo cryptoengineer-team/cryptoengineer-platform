@@ -2,7 +2,6 @@
 ## Automatización de predicción del comportamiento de Criptomonedas
 ### Proyecto TFM: Analisis de Algoritmos Técnicos y de Machine Learning para
 
-
 ## Content
 A continuación se detalla el contenido de este repositorio en sus diferentes carpetas con objeto de facilitar la navegación:
 
