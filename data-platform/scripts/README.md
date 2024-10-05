@@ -10,19 +10,17 @@ La librería controla el acceso a los datos, autenticando a los usuarios a trav�
 ## Content
 A continuación se detalla el contenido de este repositorio en sus diferentes carpetas con objeto de facilitar la navegación:
 
-- **lambda_list_info**: contiene el código Python de la función Lambda que se invoca al emplear el método list_info.
+- **InvestingScraperLoad**: contiene el código Python empleado para scrapear los indices de la plataforma Investing.
 
-- **lambda_token**: contiene el código Python de la función Lambda que se invoca para autenticar al usuario peticionario.
+- **KrakenApiOHLC**: contiene el código Python empleado en el Job de carga de Criptomonedas que realiza llamadas al API "OHLC" de Kraken, se emplea para mantener actualizada la información de criptomonedas.
 
-- **lambda_read**: contiene el código Python de la función Lambda que se invoca al emplear el método reader.
+- **KrakenApiTrades**: contiene el código Python empleado en el Job de carga de Criptomonedas que realiza llamadas al API "Trades" de Kraken, se emplea para cerrar el gap existente desde la carga inicial mediante CSV hasta el día actual.
 
-- **lambda_deploy_model**: contiene el código Python de la función Lambda que se invoca para solicitar el despliegue y publicación del modelo de usuario para inferencia on-line. Esta funcionalidad esta limitada y en versión beta.
+- **Limpieza de registros en Silver**: contiene el codigo empleado para limpiar duplicados puntualmente detectados en el datalake de criptomonedas.
 
-- **lambda_shutdown_model**: contiene el código Python de la función Lambda que se invoca para solicitar la eliminación del modelo desplegado por el usuario. Esta funcionalidad está en versión beta.
+- **load**: POR COMENTAR!!.
 
-- **deploy_utils**: contiene diferentes scripts en código Python para realizar tests de los despliegues de modelos.
-
-- **cryptoengineersdk.py**: contiene el codigo de la librería.
+- **storage**: POR COMENTAR!!.
 
 ## Autores
 	- Eduardo Muñoz Sala		    Máster Data Engineer
