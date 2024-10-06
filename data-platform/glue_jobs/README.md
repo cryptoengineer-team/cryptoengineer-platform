@@ -2,25 +2,32 @@
 ## Automatización de predicción del comportamiento de Criptomonedas
 ### Proyecto TFM: Master en Data Science y Master en Data Engineering and Big Data
 
-## Libreria CryptoEngineerSDK
-Se ha desarrollado una librería instalable de Python. Esta librería facilita el acceso a los datos por parte de los Data Scientist y proporciona información de los datos disponibles en el Data Lake. 
- 
-La librería controla el acceso a los datos, autenticando a los usuarios a través de usuario y token personalizados. Además, nunca se obtiene acceso directo al Data Lake, ya que se generan urls para descarga de los datos que son válidas por unos minutos, donde se descargan los datos y se cargan en un dataframe para su posterior uso por parte de Data Scientist. La autenticación está separada en una función, api y lambda por evitar consumo de tiempo de la lambda de lectura datos al estar limitada en tiempos. 
-
 ## Content
-A continuación se detalla el contenido de este repositorio en sus diferentes carpetas con objeto de facilitar la navegación:
+En esta carpeta se encuetran los jupyter notebooks que ejecutan los trabajos de AWS Glue, y que se orquestarán usando AWS Workflows.
 
-- **InvestingScraperLoad**: contiene el código Python empleado para scrapear los indices de la plataforma Investing.
+- **API_Load_Cryptos**: contiene el código Python del proceso de ingesta de datos por lotes para las criptomonedas.
 
-- **KrakenApiOHLC**: contiene el código Python empleado en el Job de carga de Criptomonedas que realiza llamadas al API "OHLC" de Kraken, se emplea para mantener actualizada la información de criptomonedas.
+- **Historic_Load_Cryptos**: contiene el código Python del proceso de ingesta de datos para la carga histórica de criptomonedas.
 
-- **KrakenApiTrades**: contiene el código Python empleado en el Job de carga de Criptomonedas que realiza llamadas al API "Trades" de Kraken, se emplea para cerrar el gap existente desde la carga inicial mediante CSV hasta el día actual.
+- **Historic_Load_Indices**: contiene el código Python del proceso de ingesta de datos para la carga histórica de índices.
 
-- **Limpieza de registros en Silver**: contiene el codigo empleado para limpiar duplicados puntualmente detectados en el datalake de criptomonedas.
+- **load_historical_commodities**: contiene el código Python del proceso de ingesta de datos para la carga histórica de commodities.
 
-- **load**: módulo con código para acceder a las APIs de ciertos valores y descargas por lotes, en tiempo real, etc.
+- **load_historical_rates**: contiene el código Python del proceso de ingesta de datos para la carga histórica de forex.
 
-- **storage**: módulo con código para acceder a S3 para salvar y recuperar datos.
+- **load_multiple_batch_commodities**: contiene el código Python del proceso de ingesta de datos para la carga por lotes de commodities.
+
+- **load_multiple_batch_forex**: contiene el código Python del proceso de ingesta de datos para la carga por lotes de forex.
+
+- **Silver_Load**: contiene el código Python empleado para el proceso de transformacion en capa silver para criptos e índices.
+
+- **to_silver_commodities**: contiene el código Python empleado para el proceso de transformacion en capa silver para commodities.
+
+- **to_silver_forex**: contiene el código Python empleado para el proceso de transformacion en capa silver para forex.
+
+- **Gold_Load**: contiene el código Python empleado para el proceso de transformacion en capa gold para criptos e índices.
+
+- **to_gold**: contiene el código Python empleado para el proceso de transformacion en capa gold para commodities y forex.
 
 ## Autores
 	- Eduardo Muñoz Sala		    Máster Data Engineer

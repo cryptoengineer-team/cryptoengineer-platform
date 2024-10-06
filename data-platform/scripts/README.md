@@ -2,13 +2,9 @@
 ## Automatización de predicción del comportamiento de Criptomonedas
 ### Proyecto TFM: Master en Data Science y Master en Data Engineering and Big Data
 
-## Libreria CryptoEngineerSDK
-Se ha desarrollado una librería instalable de Python. Esta librería facilita el acceso a los datos por parte de los Data Scientist y proporciona información de los datos disponibles en el Data Lake. 
- 
-La librería controla el acceso a los datos, autenticando a los usuarios a través de usuario y token personalizados. Además, nunca se obtiene acceso directo al Data Lake, ya que se generan urls para descarga de los datos que son válidas por unos minutos, donde se descargan los datos y se cargan en un dataframe para su posterior uso por parte de Data Scientist. La autenticación está separada en una función, api y lambda por evitar consumo de tiempo de la lambda de lectura datos al estar limitada en tiempos. 
-
 ## Content
-A continuación se detalla el contenido de este repositorio en sus diferentes carpetas con objeto de facilitar la navegación:
+En esta carpeta se encuetran los scripts o módulos de python que usan los trabajos de AWS Glue, principalmente para acceder a las fuentes de datos.
+
 
 - **InvestingScraperLoad**: contiene el código Python empleado para scrapear los indices de la plataforma Investing.
 

@@ -43,7 +43,10 @@ Los workflows que se han generado son:
 ## Content
 A continuación se detalla el contenido de este repositorio en sus diferentes carpetas con objeto de facilitar la navegación:
 
-- **glue_jobs**: contiene los notebooks y/o scripts en Python que se ejecutan en cada uno de los trabajos de AWS Glue para ingestar, transformar y consolidar los datos.
+- **glue_jobs**: contiene los notebooks en Python que se ejecutan en cada uno de los trabajos de AWS Glue para ingestar, transformar y consolidar los datos.
+
+- **scripts**: contiene los módulos en Python que se emplean en cada uno de los trabajos de AWS Glue para la carga del data lake así como para la evaluación de modelos.
+
 
 ## Autores
 	- Eduardo Muñoz Sala		    Máster Data Engineer

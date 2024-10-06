@@ -1,5 +1,6 @@
 # CryptoEngineer Data and Model Platform
-## Automatización de predicción del comportamiento de Criptomonedas
+### Automatización de predicción del comportamiento de Criptomonedas
+![](images/portada_criptoengineer.png)
 ### Proyecto TFM: Master en Data Science y Master en Data Engineering and Big Data
 
 ## Problem Description
@@ -26,11 +27,13 @@ A continuación se detalla el contenido de este repositorio en sus diferentes ca
 - **terraform**: es una sección aún en progreso y opcional que se irá completando en siguientes versiones. Almacena las definiciones para el despliegue de partes de la solución usando Terraform.
 
 ## Autores
-	- Eduardo Muñoz Sala		    Máster Data Engineer
-	- Julian Luis García Pérez		Máster Data Engineer
+Este proyecto ha sido realizado por las siguientes personas:
+
+	- Eduardo Muñoz Sala		            Máster Data Engineer
+	- Julian Luis García Pérez		    Máster Data Engineer
 	- David Martín Hernández		    Máster Data Engineer
-	- Héctor Jesús Ibañez Dura		Máster Data Science
-	- Eugenio Chinea García		    Máster Data Science
+	- Héctor Jesús Ibañez Dura		    Máster Data Science
+	- Eugenio Chinea García		            Máster Data Science
 	- Carlos Altuzarra García		    Máster Data Science
 
 ## Contributing

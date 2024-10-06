@@ -2,6 +2,11 @@
 ## Automatización de predicción del comportamiento de Criptomonedas
 ### Proyecto TFM: Analisis de Algoritmos Técnicos y de Machine Learning para
 
+## Análisis técnicos y Modelos ML para inversión en criptomonedas
+En esta sección se definen los diferentes analisis exploratorios, análisis técnicos y definición de modelos ML para determinar la estrategia de inversión en criptos. 
+
+Se pueden encontrar notebooks y scripts en python para ejecutar dichos estudios.
+
 ## Content
 A continuación se detalla el contenido de este repositorio en sus diferentes carpetas con objeto de facilitar la navegación:
 
